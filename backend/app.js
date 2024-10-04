@@ -39,6 +39,10 @@ app.get('/prescription_analyser', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'prescription.html'));
 });
 
+app.get('/symptom2disease', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'symptom2disease.html'));
+});
+
 app.listen(3000, () => { 
     console.log("Listening on port 3000");
 });

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Symptom Selector</title>
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #e9ecef; /* Subtle background color */
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column; /* Stack items for better mobile view */
+        align-items: center; /* Center items */
+        padding: 20px;
+        max-width: 1200px;
+        margin: auto;
+      }
+
+      h1 {
+        color: #343a40;
+        margin-bottom: 20px;
+        text-align: center;
+        width: 100%;
+      }
+
+      .every {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        width: 100%;
+      }
+
+      .symptoms {
+        flex: 1; /* Allow symptoms section to grow */
+        display: flex;
+        flex-direction: column; /* Vertical alignment */
+        align-items: center;
+        gap: 15px;
+        height: fit-content; /* Adjust to content size */
+      }
+
+      .selected-symptoms {
+        width: 300px; /* Fixed width for the selected symptoms section */
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 12px; /* Increased padding */
+        margin-bottom: 15px;
+        font-size: 16px; /* Larger font size */
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .bubble {
+        background-color: #007bff;
+        color: white;
+        border-radius: 30px;
+        padding: 10px 20px; /* Increased padding */
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s, transform 0.2s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 90%; /* Set a consistent width */
+      }
+
+      .bubble:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+      }
+
+      .bubble.selected {
+        background-color: #28a745; /* Different color for selected */
+      }
+
+      .selected-symptoms h2 {
+        margin-top: 0;
+        color: #343a40;
+        text-align: center;
+      }
+
+      .selected-symptoms ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .selected-symptoms li {
+        padding: 10px;
+        border-bottom: 1px solid #e9ecef; /* Subtle border */
+      }
+
+      .selected-symptoms li:last-child {
+        border-bottom: none;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .every {
+          flex-direction: column; /* Stack sections on mobile */
+        }
+
+        .symptoms,
+        .selected-symptoms {
+          width: 100%; /* Full width on mobile */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Symptom Selector</h1>
+      <input type="text" id="searchInput" placeholder="Search symptoms..." />
+      <div class="every">
+        <div class="symptoms"></div>
+        <div class="selected-symptoms">
+          <h2>Selected Symptoms and Predicted Disease</h2>
+          <ul id="selectedList"></ul>
+        </div>
+      </div>
+    </div>
+    <script>
+      const symptoms = [
+        "Itching",
+        "Skin Rash",
+        "Nodal Skin Eruptions",
+        "Continuous Sneezing",
+        "Shivering",
+        "Chills",
+        "Joint Pain",
+        "Stomach Pain",
+        "Acidity",
+        "Ulcers on Tongue",
+        "Muscle Wasting",
+        "Vomiting",
+        "Burning Micturition",
+        "Spotting Urination",
+        "Fatigue",
+        "Weight Gain",
+        "Anxiety",
+        "Cold Hands and Feet",
+        "Mood Swings",
+        "Weight Loss",
+        "Restlessness",
+        "Lethargy",
+        "Patches in Throat",
+        "Irregular Sugar Level",
+        "Cough",
+        "High Fever",
+        "Sunken Eyes",
+        "Breathlessness",
+        "Sweating",
+        "Dehydration",
+        "Indigestion",
+        "Headache",
+        "Yellowish Skin",
+        "Dark Urine",
+        "Nausea",
+        "Loss of Appetite",
+        "Pain Behind the Eyes",
+        "Back Pain",
+        "Constipation",
+        "Abdominal Pain",
+        "Diarrhoea",
+        "Mild Fever",
+        "Yellow Urine",
+        "Yellowing of Eyes",
+        "Acute Liver Failure",
+        "Fluid Overload",
+        "Swelling of Stomach",
+        "Swelled Lymph Nodes",
+        "Malaise",
+        "Blurred and Distorted Vision",
+        "Phlegm",
+        "Throat Irritation",
+        "Redness of Eyes",
+        "Sinus Pressure",
+        "Runny Nose",
+        "Congestion",
+        "Chest Pain",
+        "Weakness in Limbs",
+        "Fast Heart Rate",
+        "Pain During Bowel Movements",
+        "Pain in Anal Region",
+        "Bloody Stool",
+        "Irritation in Anus",
+        "Neck Pain",
+        "Dizziness",
+        "Cramps",
+        "Bruising",
+        "Obesity",
+        "Swollen Legs",
+        "Swollen Blood Vessels",
+        "Puffy Face and Eyes",
+        "Enlarged Thyroid",
+        "Brittle Nails",
+        "Swollen Extremities",
+        "Excessive Hunger",
+        "Extra Marital Contacts",
+        "Drying and Tingling Lips",
+        "Slurred Speech",
+        "Knee Pain",
+        "Hip Joint Pain",
+        "Muscle Weakness",
+        "Stiff Neck",
+        "Swelling Joints",
+        "Movement Stiffness",
+        "Spinning Movements",
+        "Loss of Balance",
+        "Unsteadiness",
+        "Weakness of One Body Side",
+        "Loss of Smell",
+        "Bladder Discomfort",
+        "Foul Smell of Urine",
+        "Continuous Feel of Urine",
+        "Passage of Gases",
+        "Internal Itching",
+        "Toxic Look (Typhos)",
+        "Depression",
+        "Irritability",
+        "Muscle Pain",
+        "Altered Sensorium",
+        "Red Spots Over Body",
+        "Belly Pain",
+        "Abnormal Menstruation",
+        "Dischromic Patches",
+        "Watering from Eyes",
+        "Increased Appetite",
+        "Polyuria",
+        "Family History",
+        "Mucoid Sputum",
+        "Rusty Sputum",
+        "Lack of Concentration",
+        "Visual Disturbances",
+        "Receiving Blood Transfusion",
+        "Receiving Unsterile Injections",
+        "Coma",
+        "Stomach Bleeding",
+        "Distention of Abdomen",
+        "History of Alcohol Consumption",
+        "Fluid Overload",
+        "Blood in Sputum",
+        "Prominent Veins on Calf",
+        "Palpitations",
+        "Painful Walking",
+        "Pus Filled Pimples",
+        "Blackheads",
+        "Scurring",
+        "Skin Peeling",
+        "Silver Like Dusting",
+        "Small Dents in Nails",
+        "Inflammatory Nails",
+        "Blister",
+        "Red Sore Around Nose",
+        "Yellow Crust Ooze",
+        "Prognosis",
+      ];
+
+      const symptomMapping = {
+        Itching: "itching",
+        "Skin Rash": "skin_rash",
+        "Nodal Skin Eruptions": "nodal_skin_eruptions",
+        "Continuous Sneezing": "continuous_sneezing",
+        Shivering: "shivering",
+        Chills: "chills",
+        "Joint Pain": "joint_pain",
+        "Stomach Pain": "stomach_pain",
+        Acidity: "acidity",
+        "Ulcers on Tongue": "ulcers_on_tongue",
+        "Muscle Wasting": "muscle_wasting",
+        Vomiting: "vomiting",
+        "Burning Micturition": "burning_micturition",
+        "Spotting Urination": "spotting_urination",
+        Fatigue: "fatigue",
+        "Weight Gain": "weight_gain",
+        Anxiety: "anxiety",
+        "Cold Hands and Feet": "cold_hands_and_feets",
+        "Mood Swings": "mood_swings",
+        "Weight Loss": "weight_loss",
+        Restlessness: "restlessness",
+        Lethargy: "lethargy",
+        "Patches in Throat": "patches_in_throat",
+        "Irregular Sugar Level": "irregular_sugar_level",
+        Cough: "cough",
+        "High Fever": "high_fever",
+        "Sunken Eyes": "sunken_eyes",
+        Breathlessness: "breathlessness",
+        Sweating: "sweating",
+        Dehydration: "dehydration",
+        Indigestion: "indigestion",
+        Headache: "headache",
+        "Yellowish Skin": "yellowish_skin",
+        "Dark Urine": "dark_urine",
+        Nausea: "nausea",
+        "Loss of Appetite": "loss_of_appetite",
+        "Pain Behind the Eyes": "pain_behind_the_eyes",
+        "Back Pain": "back_pain",
+        Constipation: "constipation",
+        "Abdominal Pain": "abdominal_pain",
+        Diarrhoea: "diarrhoea",
+        "Mild Fever": "mild_fever",
+        "Yellow Urine": "yellow_urine",
+        "Yellowing of Eyes": "yellowing_of_eyes",
+        "Acute Liver Failure": "acute_liver_failure",
+        "Fluid Overload": "fluid_overload",
+        "Swelling of Stomach": "swelling_of_stomach",
+        "Swelled Lymph Nodes": "swelled_lymph_nodes",
+        Malaise: "malaise",
+        "Blurred and Distorted Vision": "blurred_and_distorted_vision",
+        Phlegm: "phlegm",
+        "Throat Irritation": "throat_irritation",
+        "Redness of Eyes": "redness_of_eyes",
+        "Sinus Pressure": "sinus_pressure",
+        "Runny Nose": "runny_nose",
+        Congestion: "congestion",
+        "Chest Pain": "chest_pain",
+        "Weakness in Limbs": "weakness_in_limbs",
+        "Fast Heart Rate": "fast_heart_rate",
+        "Pain During Bowel Movements": "pain_during_bowel_movements",
+        "Pain in Anal Region": "pain_in_anal_region",
+        "Bloody Stool": "bloody_stool",
+        "Irritation in Anus": "irritation_in_anus",
+        "Neck Pain": "neck_pain",
+        Dizziness: "dizziness",
+        Cramps: "cramps",
+        Bruising: "bruising",
+        Obesity: "obesity",
+        "Swollen Legs": "swollen_legs",
+        "Swollen Blood Vessels": "swollen_blood_vessels",
+        "Puffy Face and Eyes": "puffy_face_and_eyes",
+        "Enlarged Thyroid": "enlarged_thyroid",
+        "Brittle Nails": "brittle_nails",
+        "Swollen Extremities": "swollen_extremeties",
+        "Excessive Hunger": "excessive_hunger",
+        "Extra Marital Contacts": "extra_marital_contacts",
+        "Drying and Tingling Lips": "drying_and_tingling_lips",
+        "Slurred Speech": "slurred_speech",
+        "Knee Pain": "knee_pain",
+        "Hip Joint Pain": "hip_joint_pain",
+        "Muscle Weakness": "muscle_weakness",
+        "Stiff Neck": "stiff_neck",
+        "Swelling Joints": "swelling_joints",
+        "Movement Stiffness": "movement_stiffness",
+        "Spinning Movements": "spinning_movements",
+        "Loss of Balance": "loss_of_balance",
+        Unsteadiness: "unsteadiness",
+        "Weakness of One Body Side": "weakness_of_one_body_side",
+        "Loss of Smell": "loss_of_smell",
+        "Bladder Discomfort": "bladder_discomfort",
+        "Foul Smell of Urine": "foul_smell_of_urine",
+        "Continuous Feel of Urine": "continuous_feel_of_urine",
+        "Passage of Gases": "passage_of_gases",
+        "Internal Itching": "internal_itching",
+        "Toxic Look (Typhos)": "toxic_look_(typhos)",
+        Depression: "depression",
+        Irritability: "irritability",
+        "Muscle Pain": "muscle_pain",
+        "Altered Sensorium": "altered_sensorium",
+        "Red Spots Over Body": "red_spots_over_body",
+        "Belly Pain": "belly_pain",
+        "Abnormal Menstruation": "abnormal_menstruation",
+        "Dischromic Patches": "dischromic_patches",
+        "Watering from Eyes": "watering_from_eyes",
+        "Increased Appetite": "increased_appetite",
+        Polyuria: "polyuria",
+        "Family History": "family_history",
+        "Mucoid Sputum": "mucoid_sputum",
+        "Rusty Sputum": "rusty_sputum",
+        "Lack of Concentration": "lack_of_concentration",
+        "Visual Disturbances": "visual_disturbances",
+        "Receiving Blood Transfusion": "receiving_blood_transfusion",
+        "Receiving Unsterile Injections": "receiving_unsterile_injections",
+        Coma: "coma",
+        "Stomach Bleeding": "stomach_bleeding",
+        "Distention of Abdomen": "distention_of_abdomen",
+        "History of Alcohol Consumption": "history_of_alcohol_consumption",
+        "Fluid Overload": "fluid_overload",
+        "Blood in Sputum": "blood_in_sputum",
+        "Prominent Veins on Calf": "prominent_veins_on_calf",
+        Palpitations: "palpitations",
+        "Painful Walking": "painful_walking",
+        "Pus Filled Pimples": "pus_filled_pimples",
+        Blackheads: "blackheads",
+        Scurring: "scurring",
+        "Skin Peeling": "skin_peeling",
+        "Silver Like Dusting": "silver_like_dusting",
+        "Small Dents in Nails": "small_dents_in_nails",
+        "Inflammatory Nails": "inflammatory_nails",
+        Blister: "blister",
+        "Red Sore Around Nose": "red_sore_around_nose",
+        "Yellow Crust Ooze": "yellow_crust_ooze",
+        Prognosis: "prognosis",
+      };
+
+      const symptomsContainer = document.querySelector(".symptoms");
+      const selectedList = document.getElementById("selectedList");
+      const searchInput = document.getElementById("searchInput");
+
+      function renderSymptoms(filter = "") {
+        symptomsContainer.innerHTML = "";
+        const filteredSymptoms = symptoms.filter((symptom) =>
+          symptom.toLowerCase().includes(filter.toLowerCase())
+        );
+
+        filteredSymptoms.forEach((symptom) => {
+          const bubble = document.createElement("div");
+          bubble.className = "bubble";
+          bubble.textContent = symptom;
+          bubble.addEventListener("click", () => {
+            bubble.classList.toggle("selected");
+            updateSelectedSymptoms(); // Call function to update the selected symptoms and send the request
+          });
+          symptomsContainer.appendChild(bubble);
+        });
+      }
+
+      function updateSelectedSymptoms() {
+        const selectedSymptoms = Array.from(
+          document.querySelectorAll(".bubble.selected")
+        ).map((bubble) => bubble.textContent);
+
+        // Map selected symptoms to their corresponding values
+        const selectedValues = selectedSymptoms.map(
+          (symptom) => symptomMapping[symptom]
+        );
+
+        selectedList.innerHTML = selectedSymptoms
+          .map((symptom) => `<li>${symptom}</li>`)
+          .join("");
+
+        // Send POST request to the server with selected values
+        sendSymptomsToServer(selectedValues);
+      }
+
+      // Function to send symptoms to the server
+      function sendSymptomsToServer(symptoms) {
+        fetch("http://localhost:5000/predict_disease", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ symptoms }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Server response:", data);
+            displayServerResponse(data); // Call function to display the server response
+          })
+          .catch((error) => {
+            console.error(
+              "There was a problem with the fetch operation:",
+              error
+            );
+          });
+      }
+
+      function displayServerResponse(data) {
+        const disease = data.final_prediction || "No disease predicted";
+        const predictionElement = document.createElement("div");
+        predictionElement.className = "prediction";
+        predictionElement.textContent = `Predicted Disease: ${disease}`;
+        selectedList.appendChild(predictionElement);
+      }
+
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value;
+        renderSymptoms(query);
+      });
+
+      // Initial rendering of symptoms
+      renderSymptoms();
+    </script>
+  </body>
+</html>

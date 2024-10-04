@@ -75,7 +75,6 @@ router.post('/register', async (req, res) => {
             usersArray.push({ id: key, ...users[key] });
         }
     }
-
     const foundUser = usersArray.find(u => u.email === user.email);
     if (foundUser) {
         return res.status(409).send({msg : "user alredy exists"});

@@ -1,86 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthAI Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            background-color: #f4f4f9;
+      :root {
+        --background-color: #f0f0f0;
+        --text-color: #2d3748;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 5%;
+      }
+
+      .logo img {
+        height: 40px;
+      }
+
+      .user-actions {
+        display: flex;
+        align-items: center;
+      }
+
+      .profile-pic {
+        width: 60px; /* Increased size */
+        height: 60px; /* Increased size */
+        border-radius: 50%;
+        margin-right: 1rem;
+        cursor: pointer;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+        text-align: center;
+      }
+
+      h1,
+      h2 {
+        margin-bottom: 2rem;
+      }
+
+      .service-options {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 3rem;
+      }
+
+      .service-card {
+        flex: 1;
+        background-color: #fff;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+      }
+
+      .service-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .service-card .material-icons {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #fff;
+      }
+
+      .service-card span:last-child {
+        color: #fff;
+        font-weight: bold;
+      }
+
+      .recent-activities {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .recent-activities h3 {
+        margin-bottom: 1rem;
+        color: var(--text-color);
+      }
+
+      .view-more {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 1rem;
+        color: #3498db;
+        text-decoration: none;
+      }
+
+      .view-more .material-icons {
+        margin-left: 0.5rem;
+      }
+      .profile-container {
+        position: relative;
+        display: inline-block; /* Allows for absolute positioning of the login option */
+      }
+
+      .login-option {
+        display: none; /* Hide by default */
+        position: absolute;
+        bottom: -30px; /* Adjust as needed */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #3498db; /* Background color */
+        color: white; /* Text color */
+        padding: 0.5rem 1rem; /* Padding */
+        border-radius: 5px; /* Rounded corners */
+        font-weight: bold; /* Text weight */
+      }
+
+      .profile-container:hover .login-option {
+        display: block; /* Show on hover */
+      }
+
+      @media (max-width: 768px) {
+        .service-options {
+          flex-wrap: wrap;
         }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 1rem;
+        .service-card {
+          flex-basis: calc(50% - 0.5rem);
         }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
+      }
+
+      @media (max-width: 480px) {
+        .service-card {
+          flex-basis: 100%;
         }
-        .navbar a:hover {
-            background-color: #575757;
-        }
-        .profile {
-            position: relative;
-            display: inline-block;
-        }
-        .profile-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: white;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-        .profile-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .profile-content a:hover {
-            background-color: #ddd;
-        }
-        .profile:hover .profile-content {
-            display: block;
-        }
-        .main-content {
-            padding: 2rem;
-            text-align: center;
-        }
-        .welcome-message {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 1rem;
-        }
+      }
     </style>
-</head>
-<body>
-    <div class="navbar">
-        <div class="nav-links">
-            <a href="/medicalquery">Medical Query</a>
-            <a href="#prescription-summary">Prescription Summary</a>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img src="logo.png" alt="HealthAI Logo" />
+      </div>
+      <div class="user-actions">
+        <div class="profile-container">
+          <img
+            src="/frontend/images/profile.jpeg"
+            alt="Profile"
+            class="profile-pic"
+          />
+          <button class="login-option">Login</button>
         </div>
-        <div class="profile">
-            <a href="#"><i class="fas fa-user-circle"></i></a>
-            <div class="profile-content">
-                <a href="#profile">Profile</a>
-                <a href="#logout">Logout</a>
-            </div>
-        </div>
-    </div>
-    <div class="main-content">
-        <h1>Welcome to Our Health Service</h1>
-        <p>Here you can diagnose your symptoms, view your prescription summary, and manage your account.</p>
-    </div>
-</body>
+      </div>
+    </header>
+
+    <main>
+      <h2>Welcome to your HealthAI Cockpit</h2>
+      <h1>What do you want to create?</h1>
+      
+      <div class="service-options">
+        <a href="/prescription_analyser" class="service-card" style="background-color: #ff6b6b">
+          <span class="material-icons">description</span>
+          <span>Prescription Analysis</span>
+        </a>
+        <a href="/medicalquery" class="service-card" style="background-color: #a29bfe">
+          <span class="material-icons">mail</span>
+          <span>Medical Query</span>
+        </a>
+        <a href="/symptom2disease" class="service-card" style="background-color: #74b9ff">
+          <span class="material-icons">event</span>
+          <span>Symptom to Disease Mapping</span>
+        </a>
+        <a href="/fracture" class="service-card" style="background-color: #55efc4">
+          <span class="material-icons">language</span>
+          <span>X-Ray Analysis</span>
+        </a>
+      </div>
+      
+      <section class="recent-activities">
+        <h3>My health records</h3>
+        <p>
+          Your first health assessment - 100% secure, comprehensive analysis,
+          unlimited access
+        </p>
+        <a href="#" class="view-more"
+          >View Records <span class="material-icons">arrow_forward</span></a
+        >
+      </section>
+    </main>
+    <script>
+      const iflogged = sessionStorage.getItem("user");
+      if (iflogged) {
+        const login = document.getElementsByClassName("login-option");
+        login[0].innerHTML = "My Profile";
+      } else {
+        const login = document.getElementsByClassName("login-option");
+        login[0].addEventListener("click", function () {
+          window.location.href = "/login";
+        });
+      }
+    </script>
+  </body>
 </html>

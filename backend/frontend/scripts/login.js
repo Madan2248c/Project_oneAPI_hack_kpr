@@ -3,9 +3,6 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     const email = e.target.querySelector('input[type="text"]').value;
     const password = e.target.querySelector('input[type="password"]').value;
     
-    console.log('Login Email:', email);
-    console.log('Login Password:', password);
-    
     const user = {
         email: email,
         pass: password
@@ -28,7 +25,6 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     .then(data => {
         console.log('Login Successful:', data);
         sessionStorage.setItem('user', JSON.stringify(data.user));
-        // Handle successful login here (e.g., redirect or display a message)
         window.location.href = '/';
     })
     .catch(error => {
@@ -38,13 +34,15 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
 
 document.getElementById('signup-form').addEventListener('submit', function(e) {
     e.preventDefault();
+
+    const name = e.target.querySelector('input[type="text"]').value;
     const email = e.target.querySelector('input[type="email"]').value;
     const password = e.target.querySelector('input[type="password"]').value;
 
-    console.log('Signup Email:', email);
-    console.log('Signup Password:', password);
-
+    console.log(name);
+    
     const user = {
+        name: name,
         email: email,
         pass: password
     };
@@ -59,7 +57,7 @@ document.getElementById('signup-form').addEventListener('submit', function(e) {
     .then(response => {
         if (response.status === 409) {
             alert('User already exists! Please choose a different email.');
-            throw new Error('User already exists'); // Throw an error to skip to the catch block
+            throw new Error('User already exists');
         }
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
