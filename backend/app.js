@@ -18,6 +18,7 @@ app.use("/chat", chatRoute);
 app.use("/prescription", prescriptionRoute);
 
 
+
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'login.html'));
 });
@@ -28,6 +29,14 @@ app.get('/',(req,res)=>{
 
 app.get('/medicalquery', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'medicalQuery.html'));
+});
+
+app.get('/fracture', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'fracture.html'));
+});
+
+app.get('/prescription_analyser', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'prescription.html'));
 });
 
 app.listen(3000, () => { 

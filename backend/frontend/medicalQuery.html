@@ -115,24 +115,26 @@
       </div>
 
       <button id="interpret-btn">Interpret</button>
+      <button id="clear-history-btn">Clear History</button>
 
       <div id="chat-history" class="chat-history"></div>
     </div>
 
     <script src="frontend/scripts/medicalQuery.js"></script>
     <script>
-      // Speech-to-text using Web Speech API
       window.SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
 
       const recognition = new SpeechRecognition();
-      recognition.lang = "en-US"; // Set the default language (can be changed based on selected language)
+      recognition.lang = "en-US";
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
       const micButton = document.getElementById("mic-btn");
       const queryInput = document.getElementById("user_query");
       const languageSelect = document.getElementById("language");
+      const chtHistory = document.getElementById("chat-history");
+      const clearHistoryButton = document.getElementById("clear-history-btn");
 
       micButton.addEventListener("click", () => {
         recognition.start();
@@ -166,6 +168,30 @@
       recognition.addEventListener("error", (event) => {
         console.error("Speech recognition error: ", event.error);
         alert("Sorry, couldn't capture your speech. Please try again.");
+      });
+
+      // Clear chat history
+      // Clear chat history
+      clearHistoryButton.addEventListener("click", () => {
+        
+        fetch("/chat/clearchats", {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.text(); // or response.json() if you're sending JSON
+          })
+          .then((message) => {
+            // Clear the chat history in the UI
+            chtHistory.innerHTML = "";
+            alert(message); // Optionally show the success message
+          })
+          .catch((error) => {
+            console.error("Error clearing chat history:", error);
+            alert("Failed to clear chat history. Please try again.");
+          });
       });
     </script>
   </body>

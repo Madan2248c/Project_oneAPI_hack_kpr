@@ -1,1 +1,4 @@
 /backend/node_modules/
+/backend/models/venv/
+/backend/models/Dataset/
+/backend/models/fracturePrediction.h5

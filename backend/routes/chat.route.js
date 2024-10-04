@@ -1,41 +1,133 @@
-const Groq = require('groq-sdk');
-const groq = new Groq({ apiKey: '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' });
-const express = require('express');
+const Groq = require("groq-sdk");
+const groq = new Groq({
+  apiKey: "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",
+});
+const express = require("express");
+const { initializeApp } = require("firebase/app");
+const {
+  getDatabase,
+  ref,
+  get,
+  child,
+  set,
+  push,
+} = require("firebase/database");
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDGDy0hwqDIzWgZL3INMTaT5AngP6AKE7A",
+  authDomain: "intelgenai-efc5d.firebaseapp.com",
+  projectId: "intelgenai-efc5d",
+  storageBucket: "intelgenai-efc5d.appspot.com",
+  messagingSenderId: "482118046284",
+  appId: "1:482118046284:web:b4e3187a2915d25c355ae9",
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
 const router = express.Router();
 
-router.post('/chatcomplete', async (req, res) => {
-    try {
-        const { user_query, language, model, temperature, max_tokens, top_p, stream, stop } = req.body;
-        const prompt = `
-            Given the user query in ${language}: "${user_query}",
-            Interpret the query and if it is a medical query respond with the appropriate medical solution.
-            If the query is not a medical query, return "invalid".
-            Respond in ${language}.
-        `;
-        const messages = [
-            { role: 'system', content: 'You are a helpful assistant.' },
-            { role: 'user', content: prompt }
-        ];
-
-        const chatCompletion = await groq.chat.completions.create({
-            messages,
-            model,
-            temperature,
-            max_tokens,
-            top_p,
-            stream,
-            stop
-        });
-        res.setHeader('Content-Type', 'text/plain');
-        for await (const chunk of chatCompletion) {
-            res.write(chunk.choices[0]?.delta?.content || '');
+function getchats() {
+  return new Promise((resolve, reject) => {
+    const dbRef = ref(database);
+    get(child(dbRef, "chats/"))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          resolve(snapshot.val());
+        } else {
+          console.log("No data available");
+          resolve([]);
         }
-        res.end();
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
+      })
+      .catch((error) => {
+        console.error(error);
+        reject(error);
+      });
+  });
+}
+
+router.post("/chatcomplete", async (req, res) => {
+  try {
+    prev_chats = await getchats();
+
+    const {
+      user_query,
+      language,
+      model,
+      temperature,
+      max_tokens,
+      top_p,
+      stream,
+      stop,
+    } = req.body;
+    const prompt = `
+        Based on the previous conversations with the user ${prev_chats}, analyze the user query in ${language}: "${user_query}". If the query pertains to a medical question, provide an appropriate medical solution while considering the context of past interactions. If the query is unrelated to medicine, do not respond. Please reply in ${language}.
+        `;
+    const messages = [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: prompt },
+    ];
+
+    const chatCompletion = await groq.chat.completions.create({
+      messages,
+      model,
+      temperature,
+      max_tokens,
+      top_p,
+      stream,
+      stop,
+    });
+    res.setHeader("Content-Type", "text/plain");
+    for await (const chunk of chatCompletion) {
+      res.write(chunk.choices[0]?.delta?.content || "");
     }
+    res.end();
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
+router.post("/update_chat", (req, res) => {
+  const chats = req.body.chat;
+
+  // Set the chats data directly at the 'chats/' reference
+  set(ref(database, "chats/"), chats)
+    .then(() => {
+      console.log("Data written successfully");
+      return res.status(200).send({ msg: "Chats are successfully updated" });
+    })
+    .catch((error) => {
+      console.error("Error while saving chats:", error);
+      return res.status(500).send({ msg: error });
+    });
+});
+
+router.get("/getchats", (req, res) => {
+  const dbRef = ref(database);
+  get(child(dbRef, "chats/"))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        return res.status(200).send({ chats: snapshot.val() });
+      } else {
+        console.log("No data available");
+        return res.status(200).send({ chats: [] });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      return res.status(500).send({ msg: error });
+    });
+});
+
+router.delete('/clearchats',(req,res)=>{
+    set(ref(database,'chats/'),{})
+    .then(()=>{
+        res.send('All chats have been cleared successfully')
+    })
+    .catch((error)=>{
+        res.status(500).send(error)
+    })
+})
 
 module.exports = router;
