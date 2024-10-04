@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Interface</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f7f9fc;
+            font-family: Arial, sans-serif;
+        }
+        #upload-container {
+            width: 300px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+        #upload-container:hover {
+            background-color: #e9f5ff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        input[type="file"] {
+            display: none;
+        }
+        #upload-icon {
+            font-size: 48px;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        #upload-text {
+            color: #555;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="upload-container" onclick="document.getElementById('file-input').click()">
+        <div id="upload-icon">📷</div>
+        <div id="upload-text">Click to upload an image</div>
+        <input type="file" id="file-input" accept="image/*" onchange="handleFileUpload(event)">
+    </div>
+
+
+    <script>
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                alert(`File selected: ${file.name}`);
+    
+                const formData = new FormData();
+                formData.append('image', file);
+                try {
+                    const response = await fetch('http://localhost:3000/prescription/new_prescription', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(`File uploaded successfully! Server filename: ${result.filename}`);
+                    } else {
+                        alert(`Failed to upload file: ${result.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error during file upload:', error);
+                    alert('An error occurred while uploading the file.');
+                }
+            }
+        }
+    </script>
+    
+</body>
+</html>

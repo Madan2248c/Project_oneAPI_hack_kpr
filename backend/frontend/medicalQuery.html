@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multilingual Medical Query Interpreter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      select,
+      input[type="text"],
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #28a745;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #218838;
+      }
+
+      .chat-history {
+        margin-top: 20px;
+      }
+
+      .chat-history div {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+      }
+
+      .chat-history .user {
+        text-align: right;
+        background-color: #cce5ff;
+      }
+
+      .chat-history .ai {
+        text-align: left;
+        background-color: #d4edda;
+      }
+
+      hr {
+        margin: 20px 0;
+      }
+      .input-container {
+        position: relative;
+        width: 100%;
+      }
+
+      #user_query {
+        width: calc(100% - 40px);
+        padding-right: 40px; /* Ensure input padding leaves space for the mic button */
+      }
+
+      #mic-btn {
+        position: absolute;
+        right: 10px;
+        left: 38%;
+        top: 5%;
+        transform: translateY(-10%);
+        border: none;
+        background: none;
+        font-size: 20px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Multilingual Medical Query Interpreter</h1>
+
+      <label for="language">Select Language:</label>
+      <select id="language">
+        <option value="English">English</option>
+        <option value="Hindi">Hindi</option>
+        <option value="Malayalam">Malayalam</option>
+        <option value="Telugu">Telugu</option>
+      </select>
+
+      <label for="user_query">Enter your query:</label>
+      <div class="input-container">
+        <input
+          type="text"
+          id="user_query"
+          placeholder="Type your query here..."
+        />
+        <button id="mic-btn">🎤</button>
+      </div>
+
+      <button id="interpret-btn">Interpret</button>
+
+      <div id="chat-history" class="chat-history"></div>
+    </div>
+
+    <script src="frontend/scripts/medicalQuery.js"></script>
+    <script>
+      // Speech-to-text using Web Speech API
+      window.SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US"; // Set the default language (can be changed based on selected language)
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      const micButton = document.getElementById("mic-btn");
+      const queryInput = document.getElementById("user_query");
+      const languageSelect = document.getElementById("language");
+
+      micButton.addEventListener("click", () => {
+        recognition.start();
+      });
+
+      languageSelect.addEventListener("change", () => {
+        const selectedLanguage = languageSelect.value;
+
+        switch (selectedLanguage) {
+          case "Hindi":
+            recognition.lang = "hi-IN";
+            break;
+          case "Malayalam":
+            recognition.lang = "ml-IN";
+            break;
+          case "Telugu":
+            recognition.lang = "te-IN";
+            break;
+          default:
+            recognition.lang = "en-US";
+        }
+      });
+
+      // Capture speech and populate the input field
+      recognition.addEventListener("result", (event) => {
+        const transcript = event.results[0][0].transcript;
+        queryInput.value = transcript;
+      });
+
+      // Handle errors or no input from speech recognition
+      recognition.addEventListener("error", (event) => {
+        console.error("Speech recognition error: ", event.error);
+        alert("Sorry, couldn't capture your speech. Please try again.");
+      });
+    </script>
+  </body>
+</html>
