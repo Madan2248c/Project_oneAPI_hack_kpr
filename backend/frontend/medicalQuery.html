@@ -7,21 +7,23 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-color: #2c2c2c; /* Dark background */
+        color: #e0e0e0; /* Light text color */
         padding: 20px;
       }
 
       h1 {
         text-align: center;
-        color: #333;
+        color: #f0f0f0; /* Lighter color for the heading */
       }
 
       .container {
         max-width: 600px;
         margin: 0 auto;
         padding: 20px;
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: #3c3c3c; /* Slightly lighter container background */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
       }
 
       select,
@@ -30,19 +32,21 @@
         width: 100%;
         padding: 10px;
         margin: 10px 0;
-        border: 1px solid #ccc;
+        border: 1px solid #666; /* Darker border color */
         border-radius: 5px;
         box-sizing: border-box;
+        background-color: #4c4c4c; /* Darker input and button background */
+        color: #e0e0e0; /* Light text color for inputs */
       }
 
       button {
-        background-color: #28a745;
+        background-color: #28a745; /* Original button color */
         color: white;
         cursor: pointer;
       }
 
       button:hover {
-        background-color: #218838;
+        background-color: #218838; /* Original hover color */
       }
 
       .chat-history {
@@ -52,23 +56,25 @@
       .chat-history div {
         margin-bottom: 10px;
         padding: 10px;
-        background-color: #f1f1f1;
+        background-color: #5c5c5c; /* Darker chat history background */
         border-radius: 5px;
       }
 
       .chat-history .user {
         text-align: right;
-        background-color: #cce5ff;
+        background-color: #99c2ff; /* Light blue for user input */
       }
 
       .chat-history .ai {
         text-align: left;
-        background-color: #d4edda;
+        background-color: #000000; /* Light green for AI response */
       }
 
       hr {
         margin: 20px 0;
+        border: 1px solid #666; /* Darker line color */
       }
+
       .input-container {
         position: relative;
         width: 100%;
@@ -89,6 +95,7 @@
         background: none;
         font-size: 20px;
         cursor: pointer;
+        color: #e0e0e0; /* Light color for mic button */
       }
     </style>
   </head>
@@ -171,9 +178,7 @@
       });
 
       // Clear chat history
-      // Clear chat history
       clearHistoryButton.addEventListener("click", () => {
-        
         fetch("/chat/clearchats", {
           method: "DELETE",
         })

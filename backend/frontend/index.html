@@ -10,8 +10,11 @@
     />
     <style>
       :root {
-        --background-color: #f0f0f0;
-        --text-color: #2d3748;
+        --background-color: #2e2e2e; /* Dark background */
+        --text-color: #e1e1e1; /* Light text color */
+        --card-background: #3a3a3a; /* Card background */
+        --link-color: #3498db; /* Link color */
+        --hover-color: #4a4a4a; /* Hover color for cards */
       }
 
       * {
@@ -72,21 +75,22 @@
 
       .service-card {
         flex: 1;
-        background-color: #fff;
+        background-color: var(--card-background);
         border-radius: 15px;
         padding: 1.5rem;
         text-align: center;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         cursor: pointer;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, background-color 0.3s ease;
       }
 
       .service-card:hover {
         transform: translateY(-5px);
+        background-color: var(--hover-color); /* Change background on hover */
       }
 
       .service-card .material-icons {
@@ -101,10 +105,10 @@
       }
 
       .recent-activities {
-        background-color: #fff;
+        background-color: var(--card-background);
         padding: 2rem;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
       }
 
       .recent-activities h3 {
@@ -116,13 +120,14 @@
         display: inline-flex;
         align-items: center;
         margin-top: 1rem;
-        color: #3498db;
+        color: var(--link-color);
         text-decoration: none;
       }
 
       .view-more .material-icons {
         margin-left: 0.5rem;
       }
+      
       .profile-container {
         position: relative;
         display: inline-block; /* Allows for absolute positioning of the login option */
@@ -134,7 +139,7 @@
         bottom: -30px; /* Adjust as needed */
         left: 50%;
         transform: translateX(-50%);
-        background-color: #3498db; /* Background color */
+        background-color: var(--link-color); /* Background color */
         color: white; /* Text color */
         padding: 0.5rem 1rem; /* Padding */
         border-radius: 5px; /* Rounded corners */
