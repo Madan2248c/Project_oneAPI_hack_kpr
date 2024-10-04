@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HealthAI Dashboard</title>
+    <title>HealthAI</title>
     <link
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
@@ -164,7 +164,7 @@
   <body>
     <header>
       <div class="logo">
-        <img src="logo.png" alt="HealthAI Logo" />
+        <img src="/frontend/images/logo.png" alt="HealthAI Logo" />
       </div>
       <div class="user-actions">
         <div class="profile-container">
@@ -180,7 +180,7 @@
 
     <main>
       <h2>Welcome to your HealthAI Cockpit</h2>
-      <h1>What do you want to create?</h1>
+      <h1>What do you want to explore today?</h1>
       
       <div class="service-options">
         <a href="/prescription_analyser" class="service-card" style="background-color: #ff6b6b">
@@ -201,27 +201,33 @@
         </a>
       </div>
       
-      <section class="recent-activities">
+      <section class="recent-activities" id="recent-activities">
         <h3>My health records</h3>
         <p>
-          Your first health assessment - 100% secure, comprehensive analysis,
-          unlimited access
+          View your old medical chats
         </p>
-        <a href="#" class="view-more"
+        <a href="/profile" class="view-more"
           >View Records <span class="material-icons">arrow_forward</span></a
         >
       </section>
     </main>
     <script>
       const iflogged = sessionStorage.getItem("user");
+      const login = document.getElementsByClassName("login-option");
+      const recentActivities = document.getElementById("recent-activities");
+
       if (iflogged) {
-        const login = document.getElementsByClassName("login-option");
         login[0].innerHTML = "My Profile";
       } else {
-        const login = document.getElementsByClassName("login-option");
         login[0].addEventListener("click", function () {
           window.location.href = "/login";
         });
+        recentActivities.innerHTML = `
+          <h3>My health records</h3>
+          <p>Login to see your health records.</p>
+          <a href="/login" class="view-more">
+            Login <span class="material-icons">arrow_forward</span>
+          </a>`;
       }
     </script>
   </body>

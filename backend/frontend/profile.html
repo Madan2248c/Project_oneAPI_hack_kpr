@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .profile-header {
+      background-color: #7779d6;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+    .avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 4px solid white;
+    }
+    .name {
+      font-size: 32px;
+      font-weight: bold;
+    }
+    .email {
+      font-size: 18px;
+      color: #e0e0e0;
+    }
+    .chat-history {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background-color: #fff;
+      border-top: 2px solid #ddd;
+    }
+    .chat {
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .chat.user {
+      background-color: #d1e7dd;
+      align-self: flex-start;
+      border-left: 5px solid #0f5132;
+    }
+    .chat.ai {
+      background-color: #f8d7da;
+      align-self: flex-end;
+      border-right: 5px solid #842029;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-header">
+    <img src="/frontend/images/profile.jpeg" alt="User Avatar" class="avatar">
+    <div class="name"></div>
+    <div class="email"></div>
+  </div>
+
+  <h2>Your Chat history</h2>
+
+  <div class="chat-history" id="chatHistory"></div>
+
+  <script>
+    const name = document.getElementsByClassName('name');
+    const email = document.getElementsByClassName('email');
+    var loggeduser = sessionStorage.getItem('user')
+    console.log(loggeduser);
+    loggeduser = JSON.parse(loggeduser);
+    
+    name[0].innerHTML = loggeduser['name'];
+    email[0].innerHTML = loggeduser.email;
+
+    async function fetchChatHistory() {
+      try {
+        const response = await fetch('http://localhost:3000/chat/getchats');
+        const data = await response.json();
+        displayChatHistory(data.chats);
+      } catch (error) {
+        console.error('Error fetching chat history:', error);
+      }
+    }
+
+    function displayChatHistory(chats) {
+      const chatHistoryDiv = document.getElementById('chatHistory');
+      chatHistoryDiv.innerHTML = '';
+      chats.forEach(chat => {
+        const userChat = document.createElement('div');
+        userChat.className = 'chat user';
+        userChat.textContent = `User: ${chat.user}`;
+
+        const aiChat = document.createElement('div');
+        aiChat.className = 'chat ai';
+        aiChat.textContent = `AI: ${chat.ai}`;
+
+        chatHistoryDiv.appendChild(userChat);
+        chatHistoryDiv.appendChild(aiChat);
+      });
+    }
+
+    window.onload = fetchChatHistory;
+  </script>
+</body>
+</html>

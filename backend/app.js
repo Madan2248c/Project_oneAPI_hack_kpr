@@ -43,6 +43,10 @@ app.get('/symptom2disease', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'symptom2disease.html'));
 });
 
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'profile.html'));
+});
+
 app.listen(3000, () => { 
     console.log("Listening on port 3000");
 });
