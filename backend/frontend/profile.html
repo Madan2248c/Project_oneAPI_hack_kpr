@@ -81,41 +81,55 @@
   <script>
     const name = document.getElementsByClassName('name');
     const email = document.getElementsByClassName('email');
-    var loggeduser = sessionStorage.getItem('user')
-    console.log(loggeduser);
-    loggeduser = JSON.parse(loggeduser);
     
-    name[0].innerHTML = loggeduser['name'];
-    email[0].innerHTML = loggeduser.email;
+    // Get logged user from session storage
+    var loggeduser = sessionStorage.getItem('user');
+    
+    // Check if loggeduser exists
+    if (!loggeduser) {
+        alert("Please login first");
+        window.location.href = '/login'; // Redirect to login page
+    } else {
+        loggeduser = JSON.parse(loggeduser);
+        
+        // Display user's name and email
+        name[0].innerHTML = loggeduser['name'];
+        email[0].innerHTML = loggeduser.email;
+        
+        // Fetch chat history
+        fetchChatHistory();
+    }
 
     async function fetchChatHistory() {
-      try {
-        const response = await fetch('http://localhost:3000/chat/getchats');
-        const data = await response.json();
-        displayChatHistory(data.chats);
-      } catch (error) {
-        console.error('Error fetching chat history:', error);
-      }
+        try {
+            const response = await fetch('http://localhost:3000/chat/getchats');
+            const data = await response.json();
+            displayChatHistory(data.chats);
+        } catch (error) {
+            console.error('Error fetching chat history:', error);
+        }
     }
 
     function displayChatHistory(chats) {
-      const chatHistoryDiv = document.getElementById('chatHistory');
-      chatHistoryDiv.innerHTML = '';
-      chats.forEach(chat => {
-        const userChat = document.createElement('div');
-        userChat.className = 'chat user';
-        userChat.textContent = `User: ${chat.user}`;
+        const chatHistoryDiv = document.getElementById('chatHistory');
+        chatHistoryDiv.innerHTML = '';
+        chats.forEach(chat => {
+            const userChat = document.createElement('div');
+            userChat.className = 'chat user';
+            userChat.textContent = `User: ${chat.user}`;
 
-        const aiChat = document.createElement('div');
-        aiChat.className = 'chat ai';
-        aiChat.textContent = `AI: ${chat.ai}`;
+            const aiChat = document.createElement('div');
+            aiChat.className = 'chat ai';
+            aiChat.textContent = `AI: ${chat.ai}`;
 
-        chatHistoryDiv.appendChild(userChat);
-        chatHistoryDiv.appendChild(aiChat);
-      });
+            chatHistoryDiv.appendChild(userChat);
+            chatHistoryDiv.appendChild(aiChat);
+        });
     }
 
-    window.onload = fetchChatHistory;
-  </script>
+    // Only call fetchChatHistory if user is logged in
+    // window.onload = fetchChatHistory; // Removed since fetchChatHistory is called above
+</script>
+
 </body>
 </html>

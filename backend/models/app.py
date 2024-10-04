@@ -1,35 +1,23 @@
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,send_file
 import numpy as np
 import os
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing import image
+from ultralytics import YOLO
 from flask_cors import CORS
 from concurrent.futures import ThreadPoolExecutor
-import asyncio  # Import asyncio
-from symptom2disease import DiseasePredictor  # Ensure this is the correct import path
+import asyncio
+from symptom2disease import DiseasePredictor 
+from yoloFractureDetection import process_image
 
 # Load your pre-trained model and disease predictor
-model = load_model('fracturePrediction.h5')
-disease = DiseasePredictor("C:/Users/Madan/OneDrive/Desktop/intel/Project_oneAPI_hack_kpr/backend/models/SyptomsData/Training.csv")
+disease = DiseasePredictor("../models/SyptomsData/Training.csv")
 
 app = Flask(__name__)
 CORS(app)
 executor = ThreadPoolExecutor()
-
-def preprocess_image(img_path: str, target_size: tuple) -> np.ndarray:
-    """Preprocess the image for prediction."""
-    img = image.load_img(img_path, target_size=target_size)
-    img_array = image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0) 
-    img_array /= 255.0  # Normalize the image
-    return img_array
-
-def sync_check_fracture(img_path: str) -> str:
-    """Synchronous function to check for fractures."""
-    test_image = preprocess_image(img_path, target_size=(150, 150))
-    result = model.predict(test_image)
-    return 'There is no fracture in the given x-ray' if result[0][0] > 0.5 else 'There is a fracture in the given x-ray, please meet your doctor immediately'
+weights_path = "./best.pt"
+class_names = ["elbow positive", "fingers positive", "forearm fracture", "humerus fracture", "humerus", "shoulder fracture", "wrist positive"]
+model = YOLO(weights_path)
 
 @app.route("/check_fracture", methods=['POST'])
 async def check_fracture():
@@ -48,11 +36,10 @@ async def check_fracture():
     img.save(img_path)
 
     # Run the synchronous function in a thread
-    loop = asyncio.get_event_loop()
-    prediction = await loop.run_in_executor(executor, sync_check_fracture, img_path)
+    out = process_image(img_path,model,class_names)
+    print(out)
 
-
-    return jsonify({"prediction": prediction})
+    return send_file(out,mimetype='image/jpeg'),200
 
 @app.route("/predict_disease", methods=['POST'])
 async def predict_disease():

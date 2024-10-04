@@ -76,12 +76,3 @@ class DiseasePredictor:
             if symptom in self.symptom_index:
                 input_vector[self.symptom_index[symptom]] = 1
         return input_vector.reshape(1, -1)
-
-# Example usage
-# predictor = DiseasePredictor("C:/Users/Madan/OneDrive/Desktop/intel/Project_oneAPI_hack_kpr/backend/models/SyptomsData/Training.csv")
-# result = predictor.predict_disease("itching,skin_rash,nodal_skin_eruptions")
-# print(result)
-# result = predictor.predict_disease("Chills")
-# print(result)
-# result = predictor.disease_prediction("Chills, vomiting")
-# print(result)
